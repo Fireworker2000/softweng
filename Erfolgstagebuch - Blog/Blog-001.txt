@@ -1,0 +1,52 @@
+2020-10-25_16:26
+
+Welcome back.
+Ich mach mal weiter mit dem Brainstorming hier, Früchtetee steht bereit und die Idee wurde angenommen (Themenmitteilung kriegt ihr doch nicht, lol).
+Also kann ich mit dem Programmieren anfangen.
+
+Ehm... Ja. Anfangen.
+Wie?
+
+Von klein nach groß. Ich will, dass jemand einen Text schreiben kann und dieser Text wird dann abgespeichert. Irgendwie.
+Moment, Tee hat fertig gezogen. (Bitte tut einfach so, als wäre hier ein paar Sekunden Pause).
+
+Weiter im Text. Pun intended.
+Ziel für heute: von so ungefähr gar nix auf einen Texteditor kommen. Klingt schon wieder nach viel zu viel.
+Wird schon.
+
+Brainstorming Design:
+Ich halte einfach mal fest, was mir so durch den Kopf schießt. 
+Wenn ich meinen verbalen Durchfall sehe, kriege ich vielleicht neue Ideen und produzier weniger verbalen Durchfall.
+
+Erste und wohl wichtigste Frage: Was soll das zentrale Element sein? Neue Beiträge erstellen oder alte Beiträge angucken?
+Primärziel ist ja eher das Führen des (Erfolgs-)Tagebuchs, nicht das Durchblättern. Also erstellen.
+Ich denke mal, dass das zentrale Fenster den heutigen Eintrag zeigt (wie auch immer ich das Datum in den Text bringe, überleg ich später).
+Kein Eintrag für heute? Blankoseite. (Halb-)fertiger Beitrag? Dann wird der angezeigt und kann editiert werden.
+Irgendeine Funktion zum Festschreiben sollte es geben. Ein Hoch mit dem Beziehungspartner sollte man nach einer Trennung nicht zurückeditieren können.
+
+Also weiter. Drei positive Geschehnisse/Errungenschaften soll man pro Tag festhalten. Mach ich dafür ein eigenes Feld bzw eine eigene Tabelle?
+Alternative wäre, dass man das in den Text packt, also werde ich wohl drei zusätzliche Textfelder einbauen für die drei Ereignisse. Soll ja vom Tagebuch getrennt sein.
+Wenn man mehr als 3 hat, soll man sich die 3 schönsten aussuchen, für den Rest gibt's ja das Tagebuch.
+
+Ach genau, das Ranking des Tages. Hatte ich das schon irgendwo? Moment, Readme checken.
+Jap, Readme sagt "Eintragen einer Tagesstimmung". Muss auch rein. Von 1-10? Emojis? (Btw: Alt+Numblock ist toll☺).
+Auch wenn Emojis sicher mehr in den verspielten, modernen Stil passt, halte ich zahlen für einfacher nachzuvollziehen. 
+Aber von 0, nicht von 1. Mitte wär dann 5, passt auch. Im Hintergrund übt jemand Trompete. UND WTF IST DIESES FIEPEN, DASS ICH HIER HÖRE?!
+Ich geh suchen, bin gleich wieder da. Ich find's einfach nicht und es ist so FUCKING NERVIG!!!
+Tee ist auch leer, na toll.
+Ranking per Schieberegler, Standardwert 5? Oder das "höffliche Scheiße" 7?
+5 ist Mitte, 5 ist Standard.
+
+Anordnung der Elemente.
+Links irgendwas, um alte Beiträge anzugucken. Ein paar Buttons "vor 1 Woche", "vor 1 Monat", "vor 1 Jahr", "vor 10 Jahren" (als ob das irgendwer so lange nutzt). Scalierung ist auch weird: 7-30-365-3650 (4-12-10).
+Anyways.
+Mitte ist der Texteditor. Darüber die 3 Textfelder. Darunter (dazwischen?) der Schieberegler. Und ganz unten zwei Knöpfe: "Eintrag speichern" und "Eintrag abschließen".
+Rechts wär dann wahrscheinlich noch Raum (mein Bruder würde widersprechen), vllt kommen da Funfacts/Witze o.Ä. hin. Irgendwas zur Unterhaltung/Auflockerung.
+100% Optional. Trotzdem eine gute Idee.
+
+Das wär's erstmal.
+Genug Gedankendurchfall für heute, einen schönen Sonntag euch noch.
+Programmieren werde ich heute vielleicht doch nicht mehr, immerhin muss ich mich erstmal wieder komplett neu einfinden, wie man programmiert.
+Bisher hab ich mich immer durchschnorren können. Das funktioniert in nem Solo-Projekt eher weniger.
+
+Anyways. Goodbye, Freunde, wir sehen uns irgendwann mal.
