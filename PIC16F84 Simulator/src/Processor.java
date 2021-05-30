@@ -1,13 +1,15 @@
 
 public class Processor extends Thread {
 	private Controller ctr;
+	private Decoder decoder;
 	protected boolean exit = false;
 	protected boolean isDebugging = false;
 	protected boolean nextStep = false;
 	protected boolean mclr = false;
 
-	public Processor(Controller ctr) {
+	public Processor(Controller ctr, Decoder decoder) {
 		this.ctr = ctr;
+		this.decoder = decoder;
 	}
 
 	public void run() {
@@ -22,13 +24,16 @@ public class Processor extends Thread {
 			ctr.memory.writeRegisterDirect(0x02, this.ctr.memory.getProgramCounter() & 0xff);
 			if(ctr.isNop == true)
 			{
-				ctr.executeCommand(0x00);
+				Instruction instruction = decoder.decodeCodeline(0x00);
+				ctr.executeCmd(instruction);
 				ctr.isNop = false;
 				ctr.memory.setProgramCounter(ctr.memory.getProgramCounter() - 1);
 			}
-			else {
-				ctr.executeCommand(this.ctr.memory.getProgrammLine());
+			else {				
+				Instruction instruction = decoder.decodeCodeline(this.ctr.memory.getProgrammLine());
+				ctr.executeCmd(instruction);
 			}
+			
 			ctr.commandCycle();
 			ctr.refreshPins();
 			ctr.getTmr().updateValues(ctr.memory.readRegisterDirect(0x05));

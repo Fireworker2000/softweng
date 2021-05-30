@@ -19,6 +19,8 @@ public class Controller extends Thread {
 	private Timer tmr;
 	// Processor "Threads"
 	private Processor prc;
+	//Decoder
+	private Decoder decoder;
 	// Frequence "Quarz Frequency"
 	protected int Frequency = 500;
 	// Running Time
@@ -204,28 +206,10 @@ public class Controller extends Thread {
 		System.out.println("Programm memory loaded");
 	}
 
-	public void updateFrequency(String iteam) {
-		switch (iteam) {
-		case "500":
-			this.Frequency = 500;
-			break;
-		case "1000":
-			this.Frequency = 1000;
-			break;
-		case "2000":
-			this.Frequency = 2000;
-			break;
-		case "3000":
-			this.Frequency = 3000;
-			break;
-		case "4000":
-			this.Frequency = 4000;
-			break;
-		}
-		// System.out.println(this.Frequency);
+	public void updateFrequency(String dropdownSelection) {
+		this.Frequency = Integer.parseInt(dropdownSelection); 
 	}
 
-	// Destination Bit
 	protected void writeDestination(int d, int f, int result) {
 		if (d == 0) {
 			this.memory.setwRegister(result);
@@ -241,168 +225,302 @@ public class Controller extends Thread {
 		int precommand = (line >> 12) & 0x0003;
 
 		if (precommand == 0) {
-
 			int command = (line >> 8) & 0x000f;
 			int payload = line & 0x00ff;
-			int d = payload >> 7 & 0x0001;
-			int f = payload & 0b01111111;
-			if (f == 0x00 | f == 0x80) {
-				f = this.memory.readRegisterDirect(0x04);
-			}
-			int w = this.memory.getwRegister();
-			if (command == 7) {
-				// ADDWF
-				this.ADDWF(f, d);
-			} else if (command == 5) {
-				// ANDWF
-				this.ANDWF(f, d);
-			} else if (command == 1) {
-				if (d == 1) {
-					// CLRF
-					this.CLRF(f);
-				} else {
-					// CLRW
-					this.CLRW(w);
-				}
-			} else if (command == 9) {
-				// COMF
-				this.COMF(f, d);
-			} else if (command == 3) {
-				// DECF
-				this.DECF(f, d);
-			} else if (command == 11) {
-				// DECFSZ
-				this.DECFSZ(f, d);
-			} else if (command == 10) {
-				// INCF
-				this.INCF(f, d);
-			} else if (command == 15) {
-				// INCFSZ
-				this.INCFSZ(f, d);
-			} else if (command == 4) {
-				// IORWF
-				this.IORWF(f, d);
-			} else if (command == 8) {
-				// MOVF
-				this.MOVF(f, d);
-			} else if (command == 0) {
-				if (d == 1) {
-					// MOVWF
-					this.MOVWF(f);
-				} else if (payload == 0b01100100) {
-					// CLRWDT
-					this.CLRWDT();
-				} else if (payload == 0b00001001) {
-					// RETFIE
-					this.RETFIE();
-				} else if (payload == 0b00001000) {
-					// RETURN
-					this.RETURN();
-				} else if (payload == 0b01100011) {
-					// SLEEP
-					this.SLEEP();
-				} else {
-					this.NOP();
-				}
-			} else if (command == 13) {
-				// RLF
-				this.RLF(f, d);
-			} else if (command == 12) {
-				// RRF
-				this.RRF(f, d);
-			} else if (command == 2) {
-				// SUBWF
-				this.SUBWF(f, d);
-			} else if (command == 14) {
-				// SWAPF
-				this.SWAPF(f, d);
-			} else if (command == 6) {
-				// XORWF
-				this.XORWF(f, d);
-			}
-
+			this.precommandZero(command, payload);
 		} else if (precommand == 1) {
 			int command = (line >> 10) & 0x0003;
 			int payload = line & 0x03ff;
-			int b = (payload >> 7) & 0x0007;
-			int f = payload & 0x007f;
-			if (f == 0x00 | f == 0x80) {
-				f = this.memory.readRegisterDirect(0x04);
-			}
-			// int f = payload & 0b01111111;
-			if (command == 0) {
-				// BCF
-				this.BCF(f, b);
-			} else if (command == 1) {
-				// BSF
-				this.BSF(f, b);
-			} else if (command == 2) {
-				// BTFSC
-				this.BTFSC(f, b);
-			} else if (command == 3) {
-				// BTFSS
-				this.BTFSS(f, b);
-			}
-		} else if (precommand == 2) {
+			this.precommandOne(command, payload);
+		} 
+		else if (precommand == 2) {
 			int command = (line >> 11) & 0x0001;
 			int k = line & 0x07ff;
-			if (command == 0) {
-				// CALL
-				this.CALL(k);
-			} else if (command == 1) {
-				// GOTO
-				this.GOTO(k);
-			} else
-				System.out.println("Neither CALL nor GOTO");
-		} else if (precommand == 3) {
+			
+			if (command == 0) 		{ this.CALL(k); } 
+			else if (command == 1) 	{ this.GOTO(k);	}	
+		} 
+		else if (precommand == 3) {
 			int command = (line >> 8) & 0x000f;
 			int k = line & 0x00ff;
-			// System.out.println(command);
-			if (command == 8) {
-				// IORLW
-				this.IORLW(k);
-			} else if ((command >> 1) == 7) {
-				// ADDLW
-				this.ADDLW(k);
-			} else if (command == 9) {
-				// ANDLW
-				this.ANDLW(k);
-			} else if ((command >> 2) == 0) {
-				// MOVLW
-				this.MOVLW(k);
-			} else if ((command >> 2) == 1) {
-				// RETLW
-				this.RETLW(k);
-			} else if (command == 10) {
-				// XORLW
-				this.XORLW(k);
-			} else if ((command >> 1) == 6) {
-				// SUBLW
-				this.SUBLW(k);
-			} else {
-				this.NOP();
-			}
-			// Output Test
-			// System.out.println("Status : " +
-			// Integer.toBinaryString(this.memory.readRegister(0x03)));
-			// System.out.println("W Register: " +
-			// Integer.toHexString(this.memory.getwRegister()));
-		} // Runtime
-		this.getGui().lblRunTime.setText(this.getRuntime() + " µs");
+			this.precommandThree(command, k);
+		} 
+		
+		// Runtime
+		this.getGui().lblRunTime.setText(this.getRuntime() + " ï¿½s");
 		System.out.println(this.getRuntime());
 	}
+	
+	private void precommandZero(int command, int payload) {
+		int d = payload >> 7 & 0x0001;
+		int f = payload & 0b01111111;
+		if (f == 0x00 | f == 0x80) {
+			f = this.memory.readRegisterDirect(0x04);
+		}
+		
+		switch (command) {
+		case 7:
+			this.ADDWF(f, d); 
+			break;
+		case 5:
+			this.ANDWF(f, d); 
+			break;
+		case 1:
+			if (d == 1) {this.CLRF(f);}
+			else		{this.CLRW();}
+			break;
+		case 9:
+			this.COMF(f, d); 
+			break;
+		case 3:
+			this.DECF(f, d); 
+			break;
+		case 11:
+			this.DECFSZ(f, d);
+			break;
+		case 10:
+			this.INCF(f, d);
+			break;
+		case 15:
+			this.INCFSZ(f, d);
+			break;
+		case 4:
+			this.IORWF(f, d);
+			break;
+		case 8:
+			this.MOVF(f, d);
+			break;
+		case 0:
+			if (d == 1) { this.MOVWF(f); } 
+			else {
+				switch (payload) {
+				case 0b01100100:
+					this.CLRWDT();
+					break;
+				case 0b00001001:
+					this.RETFIE();
+					break;
+				case 0b00001000:
+					this.RETURN();
+					break;
+				case 0b01100011:
+					this.SLEEP();
+					break;
+				default:
+					this.NOP();
+					break;
+				}
+			}
+		case 13:
+			this.RLF(f, d);
+			break;
+		case 12:
+			this.RRF(f, d);
+			break;
+		case 2:
+			this.SUBWF(f, d);
+			break;
+		case 14:
+			this.SWAPF(f, d);
+			break;
+		case 6:
+			this.XORWF(f, d);
+			break;
+		}
+	}
 
+	private void precommandOne(int command, int payload) {
+		int b = (payload >> 7) & 0x0007;
+		int f = payload & 0x007f;
+		if (f == 0x00 | f == 0x80) {
+			f = this.memory.readRegisterDirect(0x04);
+		}
+		
+		switch (command) {
+		case 0:
+			this.BCF(f, b);
+			break;
+		case 1:
+			this.BSF(f, b);
+			break;
+		case 2:
+			this.BTFSC(f, b);
+			break;
+		case 3:
+			this.BTFSS(f, b);
+			break;
+		}
+	}
+	
+	private void precommandThree(int command, int k) {
+		if (command == 8) {
+			this.IORLW(k);
+		} 
+		else if ((command >> 1) == 7) {
+			this.ADDLW(k);
+		} 
+		else if (command == 9) {
+			this.ANDLW(k);
+		} 
+		else if ((command >> 2) == 0) {
+			this.MOVLW(k);
+		} 
+		else if ((command >> 2) == 1) {
+			this.RETLW(k);
+		} 
+		else if (command == 10) {
+			this.XORLW(k);
+		} 
+		else if ((command >> 1) == 6) {
+			this.SUBLW(k);
+		} 
+		else {
+			this.NOP();
+		}
+	}
+	
+	protected void executeCmd(Instruction instruction) {
+		String command = instruction.getMnemonic();
+		int d = instruction.getParameterD();
+		int f = instruction.getParameterF();
+		int b = instruction.getParameterB();
+		int k = instruction.getParameterK();
+		
+		if (f == 0x00 | f == 0x80) {
+			f = this.memory.readRegisterDirect(0x04);
+		}
+		
+		//instructions ordered according to PIC documentation, page 56
+		switch (command) {
+		//Byte-oriented file register operations, see PIC docu
+		case "ADDWF": 
+			this.ADDWF(f, d);
+			break;
+		case "ANDWF": 
+			this.ANDWF(f, d);
+			break;
+		case "CLRF":
+			this.CLRF(f);
+			break;
+		case "CLRW": 
+			this.CLRW();
+			break;
+		case "COMF": 
+			this.COMF(f, d);
+			break;
+		case "DECF": 
+			this.DECF(f, d);
+			break;
+		case "DECFSZ": 
+			this.DECFSZ(f, d);
+			break;
+		case "INCF": 
+			this.INCF(f, d);
+			break;
+		case "INCFSZ": 
+			this.INCFSZ(f, d);
+			break;
+		case "IORWF": 
+			this.IORWF(f, d);
+			break;
+		case "MOVF": 
+			this.MOVF(f, d);
+			break;
+		case "MOVWF": 
+			this.MOVWF(f);
+			break;
+		case "NOP": 
+			this.NOP();
+			break;
+		case "RLF": 
+			this.RLF(f, d);
+			break;
+		case "RRF": 
+			this.RRF(f, d);
+			break;
+		case "SUBWF": 
+			this.SUBWF(f, d);
+			break;
+		case "SWAPF": 
+			this.SWAPF(f, d);
+			break;
+		case "XORWF": 
+			this.XORWF(f, d);
+			break;
+		
+		//Bit-oriented file register operations, see PIC docu
+		case "BCF": 
+			this.BCF(f, b);
+			break;
+		case "BSF": 
+			this.BSF(f, b);
+			break;
+		case "BTFSC": 
+			this.BTFSC(f, b);
+			break;
+		case "BTFSS": 
+			this.BTFSS(f, b);
+			break;
+			
+		//Literal and control operations, see PIC docu
+		case "ADDLW": 
+			this.ADDLW(k);
+			break;
+		case "ANDLW": 
+			this.ANDLW(k);
+			break;
+		case "CALL": 
+			this.CALL(k);
+			break;
+		case "CLRWDT": 
+			this.CLRWDT();
+			break;
+		case "GOTO": 
+			this.GOTO(k);
+			break;
+		case "IORLW": 
+			this.IORLW(k);
+			break;
+		case "MOVLW": 
+			this.MOVLW(k);
+			break;
+		case "RETFIE": 
+			this.RETFIE();
+			break;
+		case "RETLW": 
+			this.RETLW(k);
+			break;
+		case "RETURN": 
+			this.RETURN();
+			break;
+		case "SLEEP": 
+			this.SLEEP();
+			break;
+		case "SUBLW": 
+			this.SUBLW(k);
+			break;
+		case "XORLW": 
+			this.XORLW(k);
+			break;
+		}
+		
+
+		this.getGui().lblRunTime.setText(this.getRuntime() + " ï¿½s");
+	}
+	
 	private void ADDWF(int f, int d) {
 		System.out.println("ADDWF");
 		int w = this.memory.getwRegister();
 		int fValue = this.memory.readRegister(f);
 		int result = w + fValue;
+		
 		if (result > 255) {
 			this.memory.setCarryFlag(1);
 			result = result - 256;
 		} else {
 			this.memory.setCarryFlag(0);
 		}
+		
 		this.writeDestination(d, f, result);
 		this.memory.checkDCFlag(w, fValue);
 		this.memory.checkZFlag(result);
@@ -428,7 +546,7 @@ public class Controller extends Thread {
 
 	}
 
-	private void CLRW(int w) {
+	private void CLRW() {
 		System.out.println("CLRW");
 		this.memory.setwRegister(0);
 		this.memory.checkZFlag(0);
@@ -808,7 +926,8 @@ public class Controller extends Thread {
 
 	public void startSimu() {
 		if (this.running == false) {
-			this.prc = new Processor(this);
+			this.decoder = new Decoder();
+			this.prc = new Processor(this, this.decoder);
 			this.running = true;
 			this.prc.start();
 		} else {
