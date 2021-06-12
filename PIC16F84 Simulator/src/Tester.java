@@ -4,10 +4,10 @@ import org.junit.Test;
 public class Tester {
 	
 	/*
-	 * Tests Instruction class - does it output the stuff you put in? 
+	 * Tests Instruction class method getMnemonic - does it return the stuff you put in? 
 	 */
 	@Test
-	public void testInstructionclassReturns() {
+	public void testInstructionclassGetMnemonic() {
 		String actualMnemonic = "Mnemonic";	//can be any example String
 		int actualParameterD = 4;			//can be any integer
 		int actualParameterF = 6;			//can be any integer
@@ -15,13 +15,64 @@ public class Tester {
 		int actualParameterK = 11;			//can be any integer
 		Instruction testInstruction = new Instruction(actualMnemonic, actualParameterD, actualParameterF, actualParameterB, actualParameterK);
 		assertEquals(testInstruction.getMnemonic(), actualMnemonic);
-		assertEquals(testInstruction.getParameterD(), actualParameterD);
-		assertEquals(testInstruction.getParameterF(), actualParameterF);
-		assertEquals(testInstruction.getParameterB(), actualParameterB);
-		assertEquals(testInstruction.getParameterK(), actualParameterK);
 	}
 	
+	/*
+	 * Tests Instruction class method getParameterD - does it return the stuff you put in? 
+	 */
+	@Test
+	public void testInstructionclassGetParameterD() {
+		String actualMnemonic = "Mnemonic";	//can be any example String
+		int actualParameterD = 4;			//can be any integer
+		int actualParameterF = 60;			//can be any integer
+		int actualParameterB = 20; 			//can be any integer
+		int actualParameterK = 110;			//can be any integer
+		Instruction testInstruction = new Instruction(actualMnemonic, actualParameterD, actualParameterF, actualParameterB, actualParameterK);
+		assertEquals(testInstruction.getParameterD(), actualParameterD);
+	}
 	
+	/*
+	 * Tests Instruction class method getParameterF - does it return the stuff you put in? 
+	 */
+	@Test
+	public void testInstructionclassGetParameterF() {
+		String actualMnemonic = "Mnemonic";	//can be any example String
+		int actualParameterD = 40;			//can be any integer
+		int actualParameterF = 6;			//can be any integer
+		int actualParameterB = 20; 			//can be any integer
+		int actualParameterK = 110;			//can be any integer
+		Instruction testInstruction = new Instruction(actualMnemonic, actualParameterD, actualParameterF, actualParameterB, actualParameterK);
+		assertEquals(testInstruction.getParameterF(), actualParameterF);
+	}
+	
+	/*
+	 * Tests Instruction class method getParameterB - does it return the stuff you put in? 
+	 */
+	@Test
+	public void testInstructionclassGetParameterB() {
+		String actualMnemonic = "Mnemonic";	//can be any example String
+		int actualParameterD = 4;			//can be any integer
+		int actualParameterF = 60;			//can be any integer
+		int actualParameterB = 20; 			//can be any integer
+		int actualParameterK = 110;			//can be any integer
+		Instruction testInstruction = new Instruction(actualMnemonic, actualParameterD, actualParameterF, actualParameterB, actualParameterK);
+		assertEquals(testInstruction.getParameterB(), actualParameterB);
+	}
+	
+	/*
+	 * Tests Instruction class method getParameterK - does it return the stuff you put in? 
+	 */
+	@Test
+	public void testInstructionclassGetParameterK() {
+		String actualMnemonic = "Mnemonic";	//can be any example String
+		int actualParameterD = 40;			//can be any integer
+		int actualParameterF = 60;			//can be any integer
+		int actualParameterB = 20; 			//can be any integer
+		int actualParameterK = 11;			//can be any integer
+		Instruction testInstruction = new Instruction(actualMnemonic, actualParameterD, actualParameterF, actualParameterB, actualParameterK);
+		assertEquals(testInstruction.getParameterK(), actualParameterK);
+	}
+
 	/*
 	 * Has already found a bug
 	 * Tests decoder decoding on easy instruction without parameters
@@ -102,7 +153,26 @@ public class Tester {
 	 * Tests decoder decoding on a more complex instruction with 11-digit parameter K
 	 */
 	@Test
-	public void testDecoderWithElevenDigitParameterK() {
+	public void testDecoderWithCALL() {
+		Decoder testDecoder = new Decoder();
+		
+		String actualMnemonic = "CALL";
+		int actualPrecommand = 0b10;			//has to be two (10 in binary)
+		int actualCommand = 0b0;				//has to be zero
+		int actualParameterK = 0b00000000001;	//can be any 11-digit number
+		
+		int actualLine = (actualPrecommand << 12) + (actualCommand << 11) + actualParameterK;
+		
+		Instruction decodedInstruction = testDecoder.decodeCodeline(actualLine);
+		assertEquals(decodedInstruction.getMnemonic(), actualMnemonic);
+		assertEquals(decodedInstruction.getParameterK(), actualParameterK);
+	}
+	
+	/*
+	 * Tests decoder decoding on the other complex instruction with 11-digit parameter K
+	 */
+	@Test
+	public void testDecoderWithGOTO() {
 		Decoder testDecoder = new Decoder();
 		
 		String actualMnemonic = "GOTO";
