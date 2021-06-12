@@ -7,9 +7,9 @@ public class Processor extends Thread {
 	protected boolean nextStep = false;
 	protected boolean mclr = false;
 
-	public Processor(Controller ctr, Decoder decoder) {
+	public Processor(Controller ctr) {
 		this.ctr = ctr;
-		this.decoder = decoder;
+		this.decoder = new Decoder();
 	}
 
 	public void run() {

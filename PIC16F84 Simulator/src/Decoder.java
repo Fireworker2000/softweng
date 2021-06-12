@@ -34,8 +34,10 @@ public class Decoder {
 			int command = (line >> 11) & 0x0001;
 			
 			k = line & 0x07ff;
-			if 		(command == 0)	{ assemblerCommand = "CALL"; } 
-			else if (command == 1) 	{ assemblerCommand = "GOTO"; }	
+			if 		(command == 0)	{ 
+				assemblerCommand = "CALL"; } 
+			else if (command == 1) 	{ 
+				assemblerCommand = "GOTO"; }	
 		} 
 		else if (precommand == 3) {
 			int command = (line >> 8) & 0x000f;

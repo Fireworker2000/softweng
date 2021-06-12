@@ -7,8 +7,8 @@ public class Instruction {
 	private static int parameterB;
 	private static int parameterK;
 	
-	public Instruction(String givenCommand, int givenParameterD, int givenParameterF, int givenParameterB, int givenParameterK) {
-		Instruction.mnemonic = givenCommand;
+	public Instruction(String givenMnemonic, int givenParameterD, int givenParameterF, int givenParameterB, int givenParameterK) {
+		Instruction.mnemonic = givenMnemonic;
 		Instruction.parameterD = givenParameterD;
 		Instruction.parameterF = givenParameterF;
 		Instruction.parameterB = givenParameterB;

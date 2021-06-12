@@ -19,8 +19,6 @@ public class Controller extends Thread {
 	private Timer tmr;
 	// Processor "Threads"
 	private Processor prc;
-	//Decoder
-	private Decoder decoder;
 	// Frequence "Quarz Frequency"
 	protected int Frequency = 500;
 	// Running Time
@@ -926,8 +924,7 @@ public class Controller extends Thread {
 
 	public void startSimu() {
 		if (this.running == false) {
-			this.decoder = new Decoder();
-			this.prc = new Processor(this, this.decoder);
+			this.prc = new Processor(this);
 			this.running = true;
 			this.prc.start();
 		} else {
