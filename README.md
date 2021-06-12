@@ -1,4 +1,4 @@
-# softweng
+# "softweng" - my project for Advanced Software Engineering
 
 Second attempt at this. Changed topic in between.
 
