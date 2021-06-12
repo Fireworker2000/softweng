@@ -36,12 +36,16 @@ public class Decoder {
 			k = line & 0x07ff;
 			if 		(command == 0)	{ assemblerCommand = "CALL"; }
 			else if (command == 1) 	{ assemblerCommand = "GOTO"; }
+			else 					{ throw new IllegalArgumentException();}
 		} 
 		else if (precommand == 3) {
 			int command = (line >> 8) & 0x000f;
 			
 			k = line & 0x00ff;
 			assemblerCommand = decodeInstructionWithPrecommandThree(command);
+		}
+		else { 
+			throw new IllegalArgumentException();
 		}
 		
 		Instruction fullInstruction = new Instruction(assemblerCommand, d, f, b, k);
