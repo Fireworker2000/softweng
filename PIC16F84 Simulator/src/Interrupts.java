@@ -51,16 +51,16 @@ public class Interrupts {
 	public void checkRbInterr() {
 		// 1 = Interrupt on rising edge of RB0/INT pin
 		// 0 = Interrupt on falling edge of RB0/INT pin
-		if ((((this.ctr.memory.readRegisterDirect(0x81) & 0x40) >> 6) & 0x01) == 0x01) {
+		if ((((this.ctr.myMemory.readRegisterDirect(0x81) & 0x40) >> 6) & 0x01) == 0x01) {
 			/**
 			 * RB0/INT Interrupt Flag bit 1 = The RB0/INT interrupt occurred 0 = The RB0/INT
 			 * interrupt did not occur
 			 */
 
 			if (rb0edge == 1) {
-				int intcon = this.ctr.memory.readRegisterDirect(0x0B);
+				int intcon = this.ctr.myMemory.readRegisterDirect(0x0B);
 				intcon = intcon | 0x02;
-				this.ctr.memory.writeRegisterDirect(0x0B, intcon);
+				this.ctr.myMemory.writeRegisterDirect(0x0B, intcon);
 			}
 		}
 
@@ -68,9 +68,9 @@ public class Interrupts {
 
 			if (rb0edge == 2) {
 
-				int intcon = this.ctr.memory.readRegisterDirect(0x0B);
+				int intcon = this.ctr.myMemory.readRegisterDirect(0x0B);
 				intcon = intcon | 0x02;
-				this.ctr.memory.writeRegisterDirect(0x0B, intcon);
+				this.ctr.myMemory.writeRegisterDirect(0x0B, intcon);
 			}
 		}
 		/**
@@ -79,31 +79,31 @@ public class Interrupts {
 		 * changed state
 		 */
 		if (rbchanged) {
-			int intcon = this.ctr.memory.readRegisterDirect(0x0B);
+			int intcon = this.ctr.myMemory.readRegisterDirect(0x0B);
 			intcon = intcon | 0x01;
-			this.ctr.memory.writeRegisterDirect(0x0B, intcon);
+			this.ctr.myMemory.writeRegisterDirect(0x0B, intcon);
 		}
 	}
 
 	protected boolean checkInterruptFlags() {
-		int t0if = (this.ctr.memory.readRegisterDirect(0x0B) >> 2) & 0x01;
-		int t0ie = (this.ctr.memory.readRegisterDirect(0x0B) >> 5) & 0x01;
+		int t0if = (this.ctr.myMemory.readRegisterDirect(0x0B) >> 2) & 0x01;
+		int t0ie = (this.ctr.myMemory.readRegisterDirect(0x0B) >> 5) & 0x01;
 		if (t0if == 1 && t0ie == 1) {
 			return true;
 		}
 
-		int intf = (this.ctr.memory.readRegisterDirect(0x0B) >> 1) & 0x01;
-		int inte = (this.ctr.memory.readRegisterDirect(0x0B) >> 4) & 0x01;
+		int intf = (this.ctr.myMemory.readRegisterDirect(0x0B) >> 1) & 0x01;
+		int inte = (this.ctr.myMemory.readRegisterDirect(0x0B) >> 4) & 0x01;
 		if (intf == 1 && inte == 1) {
 			return true;
 		}
-		int rbif = (this.ctr.memory.readRegisterDirect(0x0B)) & 0x01;
-		int rbie = (this.ctr.memory.readRegisterDirect(0x0B) >> 3) & 0x01;
+		int rbif = (this.ctr.myMemory.readRegisterDirect(0x0B)) & 0x01;
+		int rbie = (this.ctr.myMemory.readRegisterDirect(0x0B) >> 3) & 0x01;
 		if (rbif == 1 && rbie == 1) {
 			return true;
 		}
-		int eeif = (this.ctr.memory.readRegisterDirect(0x88) >> 4) & 0x01;
-		int eeie = (this.ctr.memory.readRegisterDirect(0x0B) >> 6) & 0x01;
+		int eeif = (this.ctr.myMemory.readRegisterDirect(0x88) >> 4) & 0x01;
+		int eeie = (this.ctr.myMemory.readRegisterDirect(0x0B) >> 6) & 0x01;
 		if (eeif == 1 && eeie == 1) {
 			return true;
 		}
@@ -112,13 +112,13 @@ public class Interrupts {
 	}
 
 	public void checkInterrupt() {
-		int intcon = this.ctr.memory.readRegisterDirect(0x0B);
+		int intcon = this.ctr.myMemory.readRegisterDirect(0x0B);
 		int gie = (intcon >> 7) & 0x01;
 		if (gie == 1 && checkInterruptFlags()) {
-			this.ctr.memory.pushToStack(this.ctr.memory.getProgramCounter());
+			this.ctr.myMemory.pushToStack(this.ctr.myMemory.getProgramCounter());
 			// Disable other interrupts & GIE bit = 0
-			this.ctr.memory.writeRegisterDirect(0x0B, 0x7f & intcon);
-			this.ctr.memory.setProgramCounter(0x04);
+			this.ctr.myMemory.writeRegisterDirect(0x0B, 0x7f & intcon);
+			this.ctr.myMemory.setProgramCounter(0x04);
 			this.ctr.isSleep = false;
 		}
 	}

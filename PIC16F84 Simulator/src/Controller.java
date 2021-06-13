@@ -10,24 +10,24 @@ import java.util.Stack;
 //A thread is a thread of execution in a program. The JavaVirtual Machine allows an application to have multiple threads of execution running concurrently
 public class Controller extends Thread {
 	// UI
-	private SimGui gui;
+	private SimGui myGUI;
 	// Sim Memory
-	protected Memory memory;
+	protected Memory myMemory;
 	// Interrupts
-	private Interrupts intrr;
+	private Interrupts myInterruptHandler;
 	// Timer from Class Timer
-	private Timer tmr;
+	private Timer myTimerHandler;
 	// Processor "Threads"
-	private Processor prc;
+	private Processor myProcessor;
 	// Frequency "Quarz Frequency"
-	protected int Frequency = 500;
+	protected int quartzFrequency = 500;
 	// Running Time
 	protected double runtime;
 	// WD
-	protected int wDog;
+	protected int watchdog;
 	// ifSleep
 	protected boolean isSleep = false;
-	//Nop Cycle
+	//NOP Cycle
 	protected boolean isNop = false;
 
 	public void commandCycle() {
@@ -56,14 +56,14 @@ public class Controller extends Thread {
 	// A Controller every time the application starts with a memory where the code
 	// and commands saved
 	public Controller(SimGui pGui) {
-		this.gui = pGui;
-		this.memory = new Memory(this);
-		this.intrr = new Interrupts(this);
-		this.tmr = new Timer(this);
+		this.myGUI = pGui;
+		this.myMemory = new Memory(this);
+		this.myInterruptHandler = new Interrupts(this);
+		this.myTimerHandler = new Timer(this);
 	}
 
 	protected SimGui getGui() {
-		return gui;
+		return myGUI;
 	}
 
 	protected void initialize() {
@@ -74,82 +74,82 @@ public class Controller extends Thread {
 	private void initializeMemory() {
 		for (int i = 0; i < 32; i++) {
 			// Initialize Memory Cells
-			this.gui.tbl_Gpr.addRow(new Object[] { Integer.toHexString(i * 8), "", "", "", "", "", "", "", "" });
+			this.myGUI.tbl_Gpr.addRow(new Object[] { Integer.toHexString(i * 8), "", "", "", "", "", "", "", "" });
 		}
-		this.gui.tbl_SpecialRegs.addRow(new Object[] { "W_Reg", "", "" });
-		this.gui.tbl_SpecialRegs.addRow(new Object[] { "Status", "", "" });
-		this.gui.tbl_SpecialRegs.addRow(new Object[] { "FSR", "", "" });
-		this.gui.tbl_SpecialRegs.addRow(new Object[] { "PCL", "", "" });
-		this.gui.tbl_SpecialRegs.addRow(new Object[] { "PCLATCH", "", "" });
-		this.gui.tbl_SpecialRegs.addRow(new Object[] { "PC", "", "" });
-		this.gui.tbl_SfrRegs.addRow(new Object[] { "Status:", "IRP", "RP1", "RP0", "TO", "PD", "Z", "DC", "C" });
-		this.gui.tbl_SfrRegs.addRow(new Object[] { "", "", "", "", "", "", "", "", "" });
-		this.gui.tbl_SfrRegs.addRow(new Object[] { "Option:", "RPu", "IEg", "TCs", "TSe", "PSA", "PS2", "PS1", "PS0" });
-		this.gui.tbl_SfrRegs.addRow(new Object[] { "", "", "", "", "", "", "", "", "" });
-		this.gui.tbl_SfrRegs.addRow(new Object[] { "Intcon:", "GIE", "EIE", "TIE", "IE", "RIE", "TIF", "IF", "RIF" });
-		this.gui.tbl_SfrRegs.addRow(new Object[] { "", "", "", "", "", "", "", "", "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
-		this.gui.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_SpecialRegs.addRow(new Object[] { "W_Reg", "", "" });
+		this.myGUI.tbl_SpecialRegs.addRow(new Object[] { "Status", "", "" });
+		this.myGUI.tbl_SpecialRegs.addRow(new Object[] { "FSR", "", "" });
+		this.myGUI.tbl_SpecialRegs.addRow(new Object[] { "PCL", "", "" });
+		this.myGUI.tbl_SpecialRegs.addRow(new Object[] { "PCLATCH", "", "" });
+		this.myGUI.tbl_SpecialRegs.addRow(new Object[] { "PC", "", "" });
+		this.myGUI.tbl_SfrRegs.addRow(new Object[] { "Status:", "IRP", "RP1", "RP0", "TO", "PD", "Z", "DC", "C" });
+		this.myGUI.tbl_SfrRegs.addRow(new Object[] { "", "", "", "", "", "", "", "", "" });
+		this.myGUI.tbl_SfrRegs.addRow(new Object[] { "Option:", "RPu", "IEg", "TCs", "TSe", "PSA", "PS2", "PS1", "PS0" });
+		this.myGUI.tbl_SfrRegs.addRow(new Object[] { "", "", "", "", "", "", "", "", "" });
+		this.myGUI.tbl_SfrRegs.addRow(new Object[] { "Intcon:", "GIE", "EIE", "TIE", "IE", "RIE", "TIF", "IF", "RIF" });
+		this.myGUI.tbl_SfrRegs.addRow(new Object[] { "", "", "", "", "", "", "", "", "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
+		this.myGUI.tbl_Stack.addRow(new Object[] { "" });
 	}
 
 	public void updateFSRTable() {
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.memory.getwRegister()), 0, 1);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.memory.getwRegister()), 0, 2);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.memory.readRegisterDirect(0x03)), 1, 1);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.memory.readRegisterDirect(0x03)), 1, 2);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.memory.readRegisterDirect(0x04)), 2, 1);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.memory.readRegisterDirect(0x04)), 2, 2);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.memory.readRegisterDirect(0x02)), 3, 1);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.memory.readRegisterDirect(0x02)), 3, 2);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.memory.readRegisterDirect(0x0A)), 4, 1);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.memory.readRegisterDirect(0x0A)), 4, 2);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.memory.getProgramCounter()), 5, 1);
-		this.gui.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.memory.getProgramCounter()), 5, 2);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.myMemory.getwRegister()), 0, 1);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.myMemory.getwRegister()), 0, 2);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.myMemory.readRegisterDirect(0x03)), 1, 1);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.myMemory.readRegisterDirect(0x03)), 1, 2);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.myMemory.readRegisterDirect(0x04)), 2, 1);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.myMemory.readRegisterDirect(0x04)), 2, 2);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.myMemory.readRegisterDirect(0x02)), 3, 1);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.myMemory.readRegisterDirect(0x02)), 3, 2);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.myMemory.readRegisterDirect(0x0A)), 4, 1);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.myMemory.readRegisterDirect(0x0A)), 4, 2);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toHexString(this.myMemory.getProgramCounter()), 5, 1);
+		this.myGUI.tbl_SpecialRegs.setValueAt(Integer.toBinaryString(this.myMemory.getProgramCounter()), 5, 2);
 
-		this.gui.tbl_SfrRegs.setValueAt((this.memory.readRegisterDirect(0x03) & 0b00000001), 1, 8);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 1) & 0b00000001), 1, 7);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 2) & 0b00000001), 1, 6);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 3) & 0b00000001), 1, 5);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 4) & 0b00000001), 1, 4);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 5) & 0b00000001), 1, 3);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 6) & 0b00000001), 1, 2);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x03) >> 7) & 0b00000001), 1, 1);
+		this.myGUI.tbl_SfrRegs.setValueAt((this.myMemory.readRegisterDirect(0x03) & 0b00000001), 1, 8);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 1) & 0b00000001), 1, 7);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 2) & 0b00000001), 1, 6);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 3) & 0b00000001), 1, 5);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 4) & 0b00000001), 1, 4);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 5) & 0b00000001), 1, 3);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 6) & 0b00000001), 1, 2);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x03) >> 7) & 0b00000001), 1, 1);
 		// Option Register
-		this.gui.tbl_SfrRegs.setValueAt((this.memory.readRegisterDirect(0x81) & 0b00000001), 3, 8);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 1) & 0b00000001), 3, 7);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 2) & 0b00000001), 3, 6);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 3) & 0b00000001), 3, 5);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 4) & 0b00000001), 3, 4);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 5) & 0b00000001), 3, 3);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 6) & 0b00000001), 3, 2);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x81) >> 7) & 0b00000001), 3, 1);
+		this.myGUI.tbl_SfrRegs.setValueAt((this.myMemory.readRegisterDirect(0x81) & 0b00000001), 3, 8);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 1) & 0b00000001), 3, 7);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 2) & 0b00000001), 3, 6);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 3) & 0b00000001), 3, 5);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 4) & 0b00000001), 3, 4);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 5) & 0b00000001), 3, 3);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 6) & 0b00000001), 3, 2);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x81) >> 7) & 0b00000001), 3, 1);
 		// INTCON
-		this.gui.tbl_SfrRegs.setValueAt((this.memory.readRegisterDirect(0x0B) & 0b00000001), 5, 8);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 1) & 0b00000001), 5, 7);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 2) & 0b00000001), 5, 6);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 3) & 0b00000001), 5, 5);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 4) & 0b00000001), 5, 4);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 5) & 0b00000001), 5, 3);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 6) & 0b00000001), 5, 2);
-		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 7) & 0b00000001), 5, 1);
+		this.myGUI.tbl_SfrRegs.setValueAt((this.myMemory.readRegisterDirect(0x0B) & 0b00000001), 5, 8);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 1) & 0b00000001), 5, 7);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 2) & 0b00000001), 5, 6);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 3) & 0b00000001), 5, 5);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 4) & 0b00000001), 5, 4);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 5) & 0b00000001), 5, 3);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 6) & 0b00000001), 5, 2);
+		this.myGUI.tbl_SfrRegs.setValueAt(((this.myMemory.readRegisterDirect(0x0B) >> 7) & 0b00000001), 5, 1);
 	}
 
 	//Input Function Button Input
 	public void input() {
 		try {
-			String hex = this.gui.getTxt_regValue().getText();
+			String hex = this.myGUI.getTxt_regValue().getText();
 			int valuetochange = Integer.parseInt(hex, 16);
-			int changeAddress = this.gui.returnChangeAddress();
+			int changeAddress = this.myGUI.returnChangeAddress();
 			if (valuetochange > 255) {
 				valuetochange = 255;
 			}
-			this.memory.writeRegisterDirect(changeAddress, valuetochange);
+			this.myMemory.writeRegisterDirect(changeAddress, valuetochange);
 		} catch (NumberFormatException nfe) {
 			// not a valid hex
 			System.out.println("Not a valid hex");
@@ -189,13 +189,13 @@ public class Controller extends Thread {
 			// mnemonics
 			String mnemonic = st.substring(36);
 			// code view: add a Row to define the information
-			this.gui.tbl_CodeView.addRow(new Object[] { " ", pc, code, line, label, mnemonic });
+			this.myGUI.tbl_CodeView.addRow(new Object[] { " ", pc, code, line, label, mnemonic });
 			// when PC not empty
 			// Parses the string argument as a signed integer in the radix specified by the
 			// second argument
 			if (pc.equals("    ") == false) {
 				// This is Line but in execute
-				this.memory.programMemory[Integer.parseInt(pc, 16)] = Integer.parseInt(code, 16);
+				this.myMemory.programMemory[Integer.parseInt(pc, 16)] = Integer.parseInt(code, 16);
 				this.pcLine[Integer.parseInt(pc, 16)] = Integer.parseInt(line, 10);
 				this.debugLine[Integer.parseInt(pc, 16)] = false;
 			}
@@ -205,14 +205,14 @@ public class Controller extends Thread {
 	}
 
 	public void updateFrequency(String dropdownSelection) {
-		this.Frequency = Integer.parseInt(dropdownSelection); 
+		this.quartzFrequency = Integer.parseInt(dropdownSelection); 
 	}
 
 	protected void writeDestination(int d, int f, int result) {
 		if (d == 0) {
-			this.memory.setwRegister(result);
+			this.myMemory.setwRegister(result);
 		} else {
-			this.memory.writeRegister(f, result);
+			this.myMemory.writeRegister(f, result);
 		}
 	}
 	
@@ -224,7 +224,7 @@ public class Controller extends Thread {
 		int k = instruction.getParameterK();
 		
 		if (f == 0x00 | f == 0x80) {
-			f = this.memory.readRegisterDirect(0x04);
+			f = this.myMemory.readRegisterDirect(0x04);
 		}
 		
 		//instructions ordered according to PIC documentation, page 56
@@ -346,166 +346,166 @@ public class Controller extends Thread {
 	}
 	
 	private void ADDWF(int f, int d) {
-		int w = this.memory.getwRegister();
-		int fValue = this.memory.readRegister(f);
+		int w = this.myMemory.getwRegister();
+		int fValue = this.myMemory.readRegister(f);
 		int result = w + fValue;
 		
 		if (result > 255) {
-			this.memory.setCarryFlag(1);
+			this.myMemory.setCarryFlag(1);
 			result = result - 256;
 		} else {
-			this.memory.setCarryFlag(0);
+			this.myMemory.setCarryFlag(0);
 		}
 		
 		this.writeDestination(d, f, result);
-		this.memory.checkDCFlag(w, fValue);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkDCFlag(w, fValue);
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 	}
 
 	private void ANDWF(int f, int d) {
-		int w = this.memory.getwRegister();
-		int fValue = this.memory.readRegister(f);
+		int w = this.myMemory.getwRegister();
+		int fValue = this.myMemory.readRegister(f);
 		int result = w & fValue;
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 
 	}
 
 	private void CLRF(int f) {
-		this.memory.writeRegister(f, 0);
-		this.memory.checkZFlag(0);
-		this.memory.incPC();
+		this.myMemory.writeRegister(f, 0);
+		this.myMemory.checkZFlag(0);
+		this.myMemory.incPC();
 
 	}
 
 	private void CLRW() {
-		this.memory.setwRegister(0);
-		this.memory.checkZFlag(0);
-		this.memory.incPC();
+		this.myMemory.setwRegister(0);
+		this.myMemory.checkZFlag(0);
+		this.myMemory.incPC();
 	}
 
 	private void COMF(int f, int d) {
 		// XOR with 0b11111111
-		int result = this.memory.readRegister(f) ^ 0b11111111;
+		int result = this.myMemory.readRegister(f) ^ 0b11111111;
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 	}
 
 	private void DECF(int f, int d) {
-		int result = this.memory.readRegister(f);
+		int result = this.myMemory.readRegister(f);
 		if (result > 0) {
 			result--;
 		} else {
 			result = 0xFF;
 		}
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 	}
 
 	private void DECFSZ(int f, int d) {
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		if (fValue == 0) {
 			fValue = 255;
 		} else {
 			fValue--;
 			if (fValue == 0) {
-				this.memory.incPC();
+				this.myMemory.incPC();
 				this.isNop = true;
 			}
 		}
 
 		this.writeDestination(d, f, fValue);
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void INCF(int f, int d) {
-		int result = this.memory.readRegister(f);
+		int result = this.myMemory.readRegister(f);
 		if (result == 255) {
 			result = 0;
 		} else {
 			result++;
 		}
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 	}
 
 	private void INCFSZ(int f, int d) {
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		if (fValue == 255) {
 			fValue = 0;
-			this.memory.incPC();
+			this.myMemory.incPC();
 			this.isNop = true;
 		} else {
 			fValue++;
 		}
 		this.writeDestination(d, f, fValue);
-		this.memory.incPC();
+		this.myMemory.incPC();
 
 	}
 
 	private void IORWF(int f, int d) {
-		int w = this.memory.getwRegister();
-		int fValue = this.memory.readRegister(f);
+		int w = this.myMemory.getwRegister();
+		int fValue = this.myMemory.readRegister(f);
 		int result = w | fValue;
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 	}
 
 	private void MOVF(int f, int d) {
-		int result = this.memory.readRegister(f);
+		int result = this.myMemory.readRegister(f);
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 	}
 
 	private void MOVWF(int f) {
-		int w = this.memory.getwRegister();
-		this.memory.writeRegister(f, w);
-		this.memory.incPC();
+		int w = this.myMemory.getwRegister();
+		this.myMemory.writeRegister(f, w);
+		this.myMemory.incPC();
 	}
 
 	private void NOP() {
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void RLF(int f, int d) {
-		int fValue = this.memory.readRegister(f);
-		int cValue = this.memory.readRegisterDirect(0x03) & 0b00000001;
+		int fValue = this.myMemory.readRegister(f);
+		int cValue = this.myMemory.readRegisterDirect(0x03) & 0b00000001;
 		if ((fValue & 128) == 128) {
-			this.memory.setCarryFlag(1);
+			this.myMemory.setCarryFlag(1);
 		} else {
-			this.memory.setCarryFlag(0);
+			this.myMemory.setCarryFlag(0);
 		}
 		// Rotate left
 		int result = ((fValue << 1) & 0xff) | (cValue & 1);
 		this.writeDestination(d, f, result);
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void RRF(int f, int d) {
-		int fValue = this.memory.readRegister(f);
-		int cValue = this.memory.readRegisterDirect(0x03) & 0b00000001;
+		int fValue = this.myMemory.readRegister(f);
+		int cValue = this.myMemory.readRegisterDirect(0x03) & 0b00000001;
 		// Minimum Value
 		if ((fValue & 1) == 1) {
-			this.memory.setCarryFlag(1);
+			this.myMemory.setCarryFlag(1);
 		} else {
-			this.memory.setCarryFlag(0);
+			this.myMemory.setCarryFlag(0);
 		}
 		// Rotate Right
 		int result = (fValue >> 1) | (cValue << 7);
 		this.writeDestination(d, f, result);
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void SUBWF(int f, int d) {
-		int w = this.memory.getwRegister();
-		int fValue = this.memory.readRegister(f);
+		int w = this.myMemory.getwRegister();
+		int fValue = this.myMemory.readRegister(f);
 		int result;
 		if (w > fValue) {
 			// to remove the negation
@@ -514,43 +514,43 @@ public class Controller extends Thread {
 			result = fValue - w;
 		}
 		if (fValue - w < 0) {
-			this.memory.setCarryFlag(0);
+			this.myMemory.setCarryFlag(0);
 		} else {
-			this.memory.setCarryFlag(1);
+			this.myMemory.setCarryFlag(1);
 		}
 		if (fValue - w > 15) {
-			this.memory.setDCFlag(1);
+			this.myMemory.setDCFlag(1);
 		} else {
-			this.memory.setDCFlag(0);
+			this.myMemory.setDCFlag(0);
 		}
-		this.memory.checkZFlag(result);
+		this.myMemory.checkZFlag(result);
 		this.writeDestination(d, f, result);
-		this.memory.incPC();
+		this.myMemory.incPC();
 
 	}
 
 	private void SWAPF(int f, int d) {
 		int nibh, nibl;
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		nibh = (fValue & 0b11110000) >> 4;
 		nibl = (fValue & 0b00001111) << 4;
 		int result = nibh + nibl;
 		this.writeDestination(d, f, result);
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void XORWF(int f, int d) {
-		int w = this.memory.getwRegister();
-		int fValue = this.memory.readRegister(f);
+		int w = this.myMemory.getwRegister();
+		int fValue = this.myMemory.readRegister(f);
 		int result = (w ^ fValue);
 		this.writeDestination(d, f, result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 
 	}
 
 	private void BCF(int f, int b) {
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		// Bit Mask 255
 		int bitMask = 0xff;
 		// shift Mask 1
@@ -558,199 +558,199 @@ public class Controller extends Thread {
 		shiftMask = shiftMask << b;
 		bitMask = shiftMask ^ bitMask;
 		fValue = fValue & bitMask;
-		this.memory.writeRegister(f, fValue);
-		this.memory.incPC();
+		this.myMemory.writeRegister(f, fValue);
+		this.myMemory.incPC();
 	}
 
 	private void BSF(int f, int b) {
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		// Bit Mask 1
 		int bitMask = 0x01;
 		bitMask = bitMask << b;
 		fValue = fValue | bitMask;
-		this.memory.writeRegister(f, fValue);
-		this.memory.incPC();
+		this.myMemory.writeRegister(f, fValue);
+		this.myMemory.incPC();
 	}
 
 	private void BTFSC(int f, int b) {
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		int bitMask = 0x01;
 		bitMask = bitMask << b;
 		fValue = fValue & bitMask;
 		if (fValue == 0) {
-			this.memory.incPC();
+			this.myMemory.incPC();
 			this.isNop = true;
 		}
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void BTFSS(int f, int b) {
-		int fValue = this.memory.readRegister(f);
+		int fValue = this.myMemory.readRegister(f);
 		int bitMask = 0x01;
 		bitMask = bitMask << b;
 		fValue = fValue & bitMask;
 		if ((fValue >> b) == 1) {
-			this.memory.incPC();
+			this.myMemory.incPC();
 			this.isNop = true;
 		}
-		this.memory.incPC();
+		this.myMemory.incPC();
 	}
 
 	private void ADDLW(int k) {
-		int w = this.memory.getwRegister();
+		int w = this.myMemory.getwRegister();
 		int result = w + k;
 		if (result > 255) {
 			// When result > 255
 			result = result - 256;
-			this.memory.setCarryFlag(1);
+			this.myMemory.setCarryFlag(1);
 		} else {
 			result = k + w;
-			this.memory.setCarryFlag(0);
+			this.myMemory.setCarryFlag(0);
 		}
 
-		this.memory.checkZFlag(result);
-		this.memory.checkDCFlag(w, k);
-		this.memory.setwRegister(result);
-		this.memory.incPC();
+		this.myMemory.checkZFlag(result);
+		this.myMemory.checkDCFlag(w, k);
+		this.myMemory.setwRegister(result);
+		this.myMemory.incPC();
 	}
 
 	private void ANDLW(int k) {
-		int w = this.memory.getwRegister() & k;
-		this.memory.checkZFlag(w);
-		this.memory.setwRegister(w);
-		this.memory.incPC();
+		int w = this.myMemory.getwRegister() & k;
+		this.myMemory.checkZFlag(w);
+		this.myMemory.setwRegister(w);
+		this.myMemory.incPC();
 
 	}
 
 	private void CALL(int k) {
-		int pc = this.memory.getProgramCounter();
-		this.memory.pushToStack(pc + 1);
-		this.memory.setProgramCounter(k);
+		int pc = this.myMemory.getProgramCounter();
+		this.myMemory.pushToStack(pc + 1);
+		this.myMemory.setProgramCounter(k);
 		this.isNop = true;
 
 	}
 
 	private void CLRWDT() {
-		this.wDog = 0;
-		this.tmr.setPrescaler(0);
-		this.memory.setBitRegisterSpecial(0x03, 3, 1);
-		this.memory.setBitRegisterSpecial(0x03, 4, 1);
+		this.watchdog = 0;
+		this.myTimerHandler.setPrescaler(0);
+		this.myMemory.setBitRegisterSpecial(0x03, 3, 1);
+		this.myMemory.setBitRegisterSpecial(0x03, 4, 1);
 	}
 
 	private void GOTO(int k) {
-		this.memory.setProgramCounter(k);
+		this.myMemory.setProgramCounter(k);
 		this.isNop = true;
 	}
 
 	private void IORLW(int k) {
-		int w = this.memory.getwRegister() | k;
-		this.memory.checkZFlag(w);
-		this.memory.setwRegister(w);
-		this.memory.incPC();
+		int w = this.myMemory.getwRegister() | k;
+		this.myMemory.checkZFlag(w);
+		this.myMemory.setwRegister(w);
+		this.myMemory.incPC();
 	}
 
 	private void MOVLW(int k) {
-		this.memory.setwRegister(k);
-		this.memory.incPC();
+		this.myMemory.setwRegister(k);
+		this.myMemory.incPC();
 	}
 
 	private void RETFIE() {
-		int tos = this.memory.popFromStack();
-		this.memory.setProgramCounter(tos);
-		int intcon = this.memory.readRegisterDirect(0x0B);
-		this.memory.setBitRegisterSpecial(intcon, 7, 1);
+		int tos = this.myMemory.popFromStack();
+		this.myMemory.setProgramCounter(tos);
+		int intcon = this.myMemory.readRegisterDirect(0x0B);
+		this.myMemory.setBitRegisterSpecial(intcon, 7, 1);
 		this.isNop = true;
 	}
 
 	private void RETLW(int k) {
-		this.memory.setwRegister(k);
-		int tos = this.memory.popFromStack();
-		this.memory.setProgramCounter(tos);
+		this.myMemory.setwRegister(k);
+		int tos = this.myMemory.popFromStack();
+		this.myMemory.setProgramCounter(tos);
 		this.isNop = true;
 
 	}
 
 	private void RETURN() {
-		int tos = this.memory.popFromStack();
-		this.memory.setProgramCounter(tos);
+		int tos = this.myMemory.popFromStack();
+		this.myMemory.setProgramCounter(tos);
 		this.isNop = true;
 
 	}
 
 	private void SLEEP() {
-		this.wDog = 0;
-		this.tmr.setPrescaler(0);
-		this.memory.setBitRegisterSpecial(0x03, 3, 0);
-		this.memory.setBitRegisterSpecial(0x03, 4, 1);
+		this.watchdog = 0;
+		this.myTimerHandler.setPrescaler(0);
+		this.myMemory.setBitRegisterSpecial(0x03, 3, 0);
+		this.myMemory.setBitRegisterSpecial(0x03, 4, 1);
 		this.isSleep = true;
 
 	}
 
 	private void SUBLW(int k) {
-		int w = this.memory.getwRegister();
+		int w = this.myMemory.getwRegister();
 		int result;
 		if (w > k) {
 			// to remove the negation
 			result = 256 - (w - k);
 			// this is actually wrong "page 13 in the thematic sheet" but the developers
 			// have screwed up
-			this.memory.setCarryFlag(0);
-			this.memory.checkZFlag(result);
-			this.memory.setwRegister(result);
+			this.myMemory.setCarryFlag(0);
+			this.myMemory.checkZFlag(result);
+			this.myMemory.setwRegister(result);
 		} else {
 			result = k - w;
-			this.memory.setCarryFlag(1);
-			this.memory.checkZFlag(result);
-			this.memory.setwRegister(result);
+			this.myMemory.setCarryFlag(1);
+			this.myMemory.checkZFlag(result);
+			this.myMemory.setwRegister(result);
 		}
 
-		this.memory.checkDCFlag(k, w);
-		this.memory.incPC();
+		this.myMemory.checkDCFlag(k, w);
+		this.myMemory.incPC();
 	}
 
 	private void XORLW(int k) {
-		int w = this.memory.getwRegister();
+		int w = this.myMemory.getwRegister();
 		int result = (w ^ k);
-		this.memory.setwRegister(result);
-		this.memory.checkZFlag(result);
-		this.memory.incPC();
+		this.myMemory.setwRegister(result);
+		this.myMemory.checkZFlag(result);
+		this.myMemory.incPC();
 
 	}
 
 	public void stopctr() {
 		if (this.running) {
 			this.running = false;
-			this.prc.exit = true;
+			this.myProcessor.exit = true;
 		}
 	}
 
 	public void startSimu() {
 		if (this.running == false) {
-			this.prc = new Processor(this);
+			this.myProcessor = new Processor(this);
 			this.running = true;
-			this.prc.start();
+			this.myProcessor.start();
 		} else {
-			if (this.prc.isDebugging == true) {
-				this.prc.isDebugging = false;
-				this.prc.nextStep = true;
+			if (this.myProcessor.isDebugging == true) {
+				this.myProcessor.isDebugging = false;
+				this.myProcessor.nextStep = true;
 			}
 		}
 	}
 
-	public Timer getTmr() {
-		return tmr;
+	public Timer getTimerHandler() {
+		return myTimerHandler;
 	}
 
-	public Interrupts getIntrr() {
-		return intrr;
+	public Interrupts getInterruptHandler() {
+		return myInterruptHandler;
 	}
 
 	// Reset
 	public void reset() {
-		this.memory.powerOn();
-		this.memory.setProgramCounter(0);
-		this.memory.setwRegister(0);
-		this.memory.stack.clear();
+		this.myMemory.powerOn();
+		this.myMemory.setProgramCounter(0);
+		this.myMemory.setwRegister(0);
+		this.myMemory.stack.clear();
 		this.runtime = 0;
 
 	}
@@ -758,9 +758,9 @@ public class Controller extends Thread {
 	// MCLR-Pin (master clear)
 	public void mclr() {
 		this.isSleep = false;
-		this.prc.mclr = true;
+		this.myProcessor.mclr = true;
 		// this.memory.powerOn();
-		this.memory.setProgramCounter(this.memory.getProgramCounter() + 1);
+		this.myMemory.setProgramCounter(this.myMemory.getProgramCounter() + 1);
 		// this.memory.setwRegister(0);
 		// this.memory.stack.clear();
 		this.runtime = 0;
@@ -769,7 +769,7 @@ public class Controller extends Thread {
 
 	public void clearProgrammMemory() {
 		for (int i = 0; i < 1024; i++) {
-			this.memory.programMemory[i] = 0x3FFF;
+			this.myMemory.programMemory[i] = 0x3FFF;
 		}
 	}
 
@@ -787,18 +787,18 @@ public class Controller extends Thread {
 
 	// Clear Code View
 	public void clearCodeTable() {
-		int rowCount = this.gui.tbl_CodeView.getRowCount();
+		int rowCount = this.myGUI.tbl_CodeView.getRowCount();
 		// Remove rows one by one from the end of the table
 		for (int i = rowCount - 1; i >= 0; i--) {
-			this.gui.tbl_CodeView.removeRow(i);
+			this.myGUI.tbl_CodeView.removeRow(i);
 		}
 	}
 
-	// set Activeline ti Highlight
+	// set Activeline to Highlight
 	public void setActiveline() {
-		int pc = this.memory.getProgramCounter();
+		int pc = this.myMemory.getProgramCounter();
 		int line = this.pcLine[pc];
-		this.gui.setRowHighlight(line);
+		this.myGUI.setRowHighlight(line);
 	}
 
 	// Breakpoints array if true --> false, false --> true in Debug Array
@@ -809,49 +809,49 @@ public class Controller extends Thread {
 	// Single Steps
 	public void singleStep() {
 		if (this.running) {
-			this.prc.nextStep = true;
+			this.myProcessor.nextStep = true;
 		}
 	}
 
 	// Refresh I/O Pins
 	public void refreshPins() {
-		int trisa = this.memory.readRegisterDirect(0x85);
-		int trisb = this.memory.readRegisterDirect(0x86);
-		int dataa = this.memory.datalatcha;
-		int datab = this.memory.datalatchb;
-		this.getGui().setTrisA(trisa);
-		this.getGui().setTrisB(trisb);
+		int trisA = this.myMemory.readRegisterDirect(0x85);
+		int trisB = this.myMemory.readRegisterDirect(0x86);
+		int dataA = this.myMemory.datalatcha;
+		int dataB = this.myMemory.datalatchb;
+		this.getGui().setTrisA(trisA);
+		this.getGui().setTrisB(trisB);
 		int ra = getGui().getPortA();
 		int rb = getGui().getPortB();
 		for (int i = 0; i < 8; i++) {
-			if ((trisa & 0x01) == 1) {
-				this.memory.setBitRegisterSpecial(0x05, i, ra & 0x01);
+			if ((trisA & 0x01) == 1) {
+				this.myMemory.setBitRegisterSpecial(0x05, i, ra & 0x01);
 			} else {
-				this.memory.setBitRegisterSpecial(0x05, i, dataa & 0x01);
+				this.myMemory.setBitRegisterSpecial(0x05, i, dataA & 0x01);
 			}
-			dataa = dataa >> 1;
-			trisa = trisa >> 1;
+			dataA = dataA >> 1;
+			trisA = trisA >> 1;
 			ra = ra >> 1;
-			if ((trisb & 0x01) == 1) {
-				this.memory.setBitRegisterSpecial(0x06, i, rb & 0x01);
+			if ((trisB & 0x01) == 1) {
+				this.myMemory.setBitRegisterSpecial(0x06, i, rb & 0x01);
 			} else {
-				this.memory.setBitRegisterSpecial(0x06, i, datab & 0x01);
+				this.myMemory.setBitRegisterSpecial(0x06, i, dataB & 0x01);
 			}
-			datab = datab >> 1;
-			trisb = trisb >> 1;
+			dataB = dataB >> 1;
+			trisB = trisB >> 1;
 			rb = rb >> 1;
 		}
-		getGui().setPortA(this.memory.readRegisterDirect(0x05));
-		getGui().setPortB(this.memory.readRegisterDirect(0x06));
+		getGui().setPortA(this.myMemory.readRegisterDirect(0x05));
+		getGui().setPortB(this.myMemory.readRegisterDirect(0x06));
 	}
 
 
 	public int getFrequency() {
-		return Frequency;
+		return quartzFrequency;
 	}
 
 	public void setFrequency(int frequency) {
-		Frequency = frequency;
+		quartzFrequency = frequency;
 	}
 
 	public void wakeUp() {

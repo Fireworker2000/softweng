@@ -128,7 +128,7 @@ public class Memory extends Thread {
 			if (this.getRP0() == 0) {
 				if(adress == 0x01 && ((this.readRegisterDirect(0x81) >> 3) & 0x01) == 0)
 				{
-					ctr.getTmr().setPrescaler(0);
+					ctr.getTimerHandler().setPrescaler(0);
 				}
 			}
 			if (adress == 0x05) {

@@ -1,11 +1,13 @@
 
-public class Decoder {
+public class Decoder extends abstractDecoder {
 	
 	public Decoder() {}
 	
-	// Decode instruction into Assembler command and its parameters
-	protected Instruction decodeCodeline(int line) {
-		System.out.println("Command " + Integer.toHexString(line));
+	// implements the function defined in the interface
+	public Instruction decodeCodeline(int line) {
+		
+		super.logCodeline(line);
+		
 		String assemblerCommand = "";
 		int d = 0;
 		int f = 0;
@@ -36,7 +38,11 @@ public class Decoder {
 			k = line & 0x07ff;
 			if 		(command == 0)	{ assemblerCommand = "CALL"; }
 			else if (command == 1) 	{ assemblerCommand = "GOTO"; }
-			else 					{ throw new IllegalArgumentException();}
+			else { 
+				 //binary digit can either be 0 or 1, nothing else
+				super.logError("Illegal Argument at CALL/GOTO decoding, command bit is neither zero nor one.");
+				throw new IllegalArgumentException();
+			}
 		} 
 		else if (precommand == 3) {
 			int command = (line >> 8) & 0x000f;
@@ -45,11 +51,13 @@ public class Decoder {
 			assemblerCommand = decodeInstructionWithPrecommandThree(command);
 		}
 		else { 
+			//only two binary digits available, no values other than 0, 1, 2 and 3 are possible + ", D: " + d
+			super.logError("Illegal Argument at precommand assignment, decoded precommand is out of bounds.");
 			throw new IllegalArgumentException();
 		}
 		
-		System.out.println("Decoded commmand and parameters: " + assemblerCommand + ", D: " + d + ", F: " + f + ", B: " + b + ", K: " + k);
 		Instruction fullInstruction = new Instruction(assemblerCommand, d, f, b, k);
+		super.logDecodedCommand(fullInstruction);
 		return fullInstruction;
 	}
 	

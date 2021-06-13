@@ -100,7 +100,7 @@ public class SimGui {
 		ctr = new Controller(this);
 		initialize();
 		ctr.initialize();
-		ctr.memory.start();
+		ctr.myMemory.start();
 	}
 
 	/**
