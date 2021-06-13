@@ -48,6 +48,7 @@ public class Decoder {
 			throw new IllegalArgumentException();
 		}
 		
+		System.out.println("Decoded commmand and parameters: " + assemblerCommand + ", D: " + d + ", F: " + f + ", B: " + b + ", K: " + k);
 		Instruction fullInstruction = new Instruction(assemblerCommand, d, f, b, k);
 		return fullInstruction;
 	}

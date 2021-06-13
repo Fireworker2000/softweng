@@ -19,7 +19,7 @@ public class Controller extends Thread {
 	private Timer tmr;
 	// Processor "Threads"
 	private Processor prc;
-	// Frequence "Quarz Frequency"
+	// Frequency "Quarz Frequency"
 	protected int Frequency = 500;
 	// Running Time
 	protected double runtime;
@@ -140,7 +140,7 @@ public class Controller extends Thread {
 		this.gui.tbl_SfrRegs.setValueAt(((this.memory.readRegisterDirect(0x0B) >> 7) & 0b00000001), 5, 1);
 	}
 
-//Input Function Button Input
+	//Input Function Button Input
 	public void input() {
 		try {
 			String hex = this.gui.getTxt_regValue().getText();
@@ -213,167 +213,6 @@ public class Controller extends Thread {
 			this.memory.setwRegister(result);
 		} else {
 			this.memory.writeRegister(f, result);
-		}
-	}
-
-	// Commands execute function
-	protected void executeCommand(int line) {
-		System.out.println("Command " + Integer.toHexString(line));
-		// Decoder Page 56 "Themenblatt_Simulator"
-		int precommand = (line >> 12) & 0x0003;
-
-		if (precommand == 0) {
-			int command = (line >> 8) & 0x000f;
-			int payload = line & 0x00ff;
-			this.precommandZero(command, payload);
-		} else if (precommand == 1) {
-			int command = (line >> 10) & 0x0003;
-			int payload = line & 0x03ff;
-			this.precommandOne(command, payload);
-		} 
-		else if (precommand == 2) {
-			int command = (line >> 11) & 0x0001;
-			int k = line & 0x07ff;
-			
-			if (command == 0) 		{ this.CALL(k); } 
-			else if (command == 1) 	{ this.GOTO(k);	}	
-		} 
-		else if (precommand == 3) {
-			int command = (line >> 8) & 0x000f;
-			int k = line & 0x00ff;
-			this.precommandThree(command, k);
-		} 
-		
-		// Runtime
-		this.getGui().lblRunTime.setText(this.getRuntime() + " �s");
-		System.out.println(this.getRuntime());
-	}
-	
-	private void precommandZero(int command, int payload) {
-		int d = payload >> 7 & 0x0001;
-		int f = payload & 0b01111111;
-		if (f == 0x00 | f == 0x80) {
-			f = this.memory.readRegisterDirect(0x04);
-		}
-		
-		switch (command) {
-		case 7:
-			this.ADDWF(f, d); 
-			break;
-		case 5:
-			this.ANDWF(f, d); 
-			break;
-		case 1:
-			if (d == 1) {this.CLRF(f);}
-			else		{this.CLRW();}
-			break;
-		case 9:
-			this.COMF(f, d); 
-			break;
-		case 3:
-			this.DECF(f, d); 
-			break;
-		case 11:
-			this.DECFSZ(f, d);
-			break;
-		case 10:
-			this.INCF(f, d);
-			break;
-		case 15:
-			this.INCFSZ(f, d);
-			break;
-		case 4:
-			this.IORWF(f, d);
-			break;
-		case 8:
-			this.MOVF(f, d);
-			break;
-		case 0:
-			if (d == 1) { this.MOVWF(f); } 
-			else {
-				switch (payload) {
-				case 0b01100100:
-					this.CLRWDT();
-					break;
-				case 0b00001001:
-					this.RETFIE();
-					break;
-				case 0b00001000:
-					this.RETURN();
-					break;
-				case 0b01100011:
-					this.SLEEP();
-					break;
-				default:
-					this.NOP();
-					break;
-				}
-			}
-		case 13:
-			this.RLF(f, d);
-			break;
-		case 12:
-			this.RRF(f, d);
-			break;
-		case 2:
-			this.SUBWF(f, d);
-			break;
-		case 14:
-			this.SWAPF(f, d);
-			break;
-		case 6:
-			this.XORWF(f, d);
-			break;
-		}
-	}
-
-	private void precommandOne(int command, int payload) {
-		int b = (payload >> 7) & 0x0007;
-		int f = payload & 0x007f;
-		if (f == 0x00 | f == 0x80) {
-			f = this.memory.readRegisterDirect(0x04);
-		}
-		
-		switch (command) {
-		case 0:
-			this.BCF(f, b);
-			break;
-		case 1:
-			this.BSF(f, b);
-			break;
-		case 2:
-			this.BTFSC(f, b);
-			break;
-		case 3:
-			this.BTFSS(f, b);
-			break;
-		}
-	}
-	
-	private void precommandThree(int command, int k) {
-		if (command == 8) {
-			this.IORLW(k);
-		} 
-		else if ((command >> 1) == 7) {
-			this.ADDLW(k);
-		} 
-		else if (command == 9) {
-			this.ANDLW(k);
-		} 
-		else if ((command >> 2) == 0) {
-			this.MOVLW(k);
-		} 
-		else if ((command >> 2) == 1) {
-			this.RETLW(k);
-		} 
-		else if (command == 10) {
-			this.XORLW(k);
-		} 
-		else if ((command >> 1) == 6) {
-			this.SUBLW(k);
-		} 
-		else {
-			this.NOP();
 		}
 	}
 	
@@ -507,7 +346,6 @@ public class Controller extends Thread {
 	}
 	
 	private void ADDWF(int f, int d) {
-		System.out.println("ADDWF");
 		int w = this.memory.getwRegister();
 		int fValue = this.memory.readRegister(f);
 		int result = w + fValue;
@@ -526,7 +364,6 @@ public class Controller extends Thread {
 	}
 
 	private void ANDWF(int f, int d) {
-		System.out.println("ANDWF");
 		int w = this.memory.getwRegister();
 		int fValue = this.memory.readRegister(f);
 		int result = w & fValue;
@@ -537,7 +374,6 @@ public class Controller extends Thread {
 	}
 
 	private void CLRF(int f) {
-		System.out.println("CLRF");
 		this.memory.writeRegister(f, 0);
 		this.memory.checkZFlag(0);
 		this.memory.incPC();
@@ -545,14 +381,12 @@ public class Controller extends Thread {
 	}
 
 	private void CLRW() {
-		System.out.println("CLRW");
 		this.memory.setwRegister(0);
 		this.memory.checkZFlag(0);
 		this.memory.incPC();
 	}
 
 	private void COMF(int f, int d) {
-		System.out.println("COMF");
 		// XOR with 0b11111111
 		int result = this.memory.readRegister(f) ^ 0b11111111;
 		this.writeDestination(d, f, result);
@@ -561,7 +395,6 @@ public class Controller extends Thread {
 	}
 
 	private void DECF(int f, int d) {
-		System.out.println("DECF");
 		int result = this.memory.readRegister(f);
 		if (result > 0) {
 			result--;
@@ -574,7 +407,6 @@ public class Controller extends Thread {
 	}
 
 	private void DECFSZ(int f, int d) {
-		System.out.println("DECFSZ");
 		int fValue = this.memory.readRegister(f);
 		if (fValue == 0) {
 			fValue = 255;
@@ -591,9 +423,7 @@ public class Controller extends Thread {
 	}
 
 	private void INCF(int f, int d) {
-		System.out.println("INCF");
 		int result = this.memory.readRegister(f);
-		System.out.println(f);
 		if (result == 255) {
 			result = 0;
 		} else {
@@ -605,7 +435,6 @@ public class Controller extends Thread {
 	}
 
 	private void INCFSZ(int f, int d) {
-		System.out.println("INCFSZ");
 		int fValue = this.memory.readRegister(f);
 		if (fValue == 255) {
 			fValue = 0;
@@ -620,7 +449,6 @@ public class Controller extends Thread {
 	}
 
 	private void IORWF(int f, int d) {
-		System.out.println("IORWF");
 		int w = this.memory.getwRegister();
 		int fValue = this.memory.readRegister(f);
 		int result = w | fValue;
@@ -630,7 +458,6 @@ public class Controller extends Thread {
 	}
 
 	private void MOVF(int f, int d) {
-		System.out.println("MOVF");
 		int result = this.memory.readRegister(f);
 		this.writeDestination(d, f, result);
 		this.memory.checkZFlag(result);
@@ -638,19 +465,16 @@ public class Controller extends Thread {
 	}
 
 	private void MOVWF(int f) {
-		System.out.println("MOVWF");
 		int w = this.memory.getwRegister();
 		this.memory.writeRegister(f, w);
 		this.memory.incPC();
 	}
 
 	private void NOP() {
-		System.out.println("NOP");
 		this.memory.incPC();
 	}
 
 	private void RLF(int f, int d) {
-		System.out.println("RLF");
 		int fValue = this.memory.readRegister(f);
 		int cValue = this.memory.readRegisterDirect(0x03) & 0b00000001;
 		if ((fValue & 128) == 128) {
@@ -665,7 +489,6 @@ public class Controller extends Thread {
 	}
 
 	private void RRF(int f, int d) {
-		System.out.println("RRF");
 		int fValue = this.memory.readRegister(f);
 		int cValue = this.memory.readRegisterDirect(0x03) & 0b00000001;
 		// Minimum Value
@@ -681,7 +504,6 @@ public class Controller extends Thread {
 	}
 
 	private void SUBWF(int f, int d) {
-		System.out.println("SUBWF");
 		int w = this.memory.getwRegister();
 		int fValue = this.memory.readRegister(f);
 		int result;
@@ -708,7 +530,6 @@ public class Controller extends Thread {
 	}
 
 	private void SWAPF(int f, int d) {
-		System.out.println("SWAPF");
 		int nibh, nibl;
 		int fValue = this.memory.readRegister(f);
 		nibh = (fValue & 0b11110000) >> 4;
@@ -719,7 +540,6 @@ public class Controller extends Thread {
 	}
 
 	private void XORWF(int f, int d) {
-		System.out.println("XORWF");
 		int w = this.memory.getwRegister();
 		int fValue = this.memory.readRegister(f);
 		int result = (w ^ fValue);
@@ -730,7 +550,6 @@ public class Controller extends Thread {
 	}
 
 	private void BCF(int f, int b) {
-		System.out.println("BCF");
 		int fValue = this.memory.readRegister(f);
 		// Bit Mask 255
 		int bitMask = 0xff;
@@ -744,7 +563,6 @@ public class Controller extends Thread {
 	}
 
 	private void BSF(int f, int b) {
-		System.out.println("BSF");
 		int fValue = this.memory.readRegister(f);
 		// Bit Mask 1
 		int bitMask = 0x01;
@@ -755,7 +573,6 @@ public class Controller extends Thread {
 	}
 
 	private void BTFSC(int f, int b) {
-		System.out.println("BTFSC");
 		int fValue = this.memory.readRegister(f);
 		int bitMask = 0x01;
 		bitMask = bitMask << b;
@@ -768,7 +585,6 @@ public class Controller extends Thread {
 	}
 
 	private void BTFSS(int f, int b) {
-		System.out.println("BTFSS");
 		int fValue = this.memory.readRegister(f);
 		int bitMask = 0x01;
 		bitMask = bitMask << b;
@@ -781,8 +597,6 @@ public class Controller extends Thread {
 	}
 
 	private void ADDLW(int k) {
-
-		System.out.println("ADDLW");
 		int w = this.memory.getwRegister();
 		int result = w + k;
 		if (result > 255) {
@@ -801,7 +615,6 @@ public class Controller extends Thread {
 	}
 
 	private void ANDLW(int k) {
-		System.out.println("ANDLW");
 		int w = this.memory.getwRegister() & k;
 		this.memory.checkZFlag(w);
 		this.memory.setwRegister(w);
@@ -810,7 +623,6 @@ public class Controller extends Thread {
 	}
 
 	private void CALL(int k) {
-		System.out.println("CALL");
 		int pc = this.memory.getProgramCounter();
 		this.memory.pushToStack(pc + 1);
 		this.memory.setProgramCounter(k);
@@ -819,7 +631,6 @@ public class Controller extends Thread {
 	}
 
 	private void CLRWDT() {
-		System.out.println("CLRWDT");
 		this.wDog = 0;
 		this.tmr.setPrescaler(0);
 		this.memory.setBitRegisterSpecial(0x03, 3, 1);
@@ -827,13 +638,11 @@ public class Controller extends Thread {
 	}
 
 	private void GOTO(int k) {
-		System.out.println("GOTO");
 		this.memory.setProgramCounter(k);
 		this.isNop = true;
 	}
 
 	private void IORLW(int k) {
-		System.out.println("IORLW");
 		int w = this.memory.getwRegister() | k;
 		this.memory.checkZFlag(w);
 		this.memory.setwRegister(w);
@@ -841,13 +650,11 @@ public class Controller extends Thread {
 	}
 
 	private void MOVLW(int k) {
-		System.out.println("MOVLW");
 		this.memory.setwRegister(k);
 		this.memory.incPC();
 	}
 
 	private void RETFIE() {
-		System.out.println("RETFIE");
 		int tos = this.memory.popFromStack();
 		this.memory.setProgramCounter(tos);
 		int intcon = this.memory.readRegisterDirect(0x0B);
@@ -856,7 +663,6 @@ public class Controller extends Thread {
 	}
 
 	private void RETLW(int k) {
-		System.out.println("RETLW");
 		this.memory.setwRegister(k);
 		int tos = this.memory.popFromStack();
 		this.memory.setProgramCounter(tos);
@@ -865,7 +671,6 @@ public class Controller extends Thread {
 	}
 
 	private void RETURN() {
-		System.out.println("RETURN");
 		int tos = this.memory.popFromStack();
 		this.memory.setProgramCounter(tos);
 		this.isNop = true;
@@ -873,7 +678,6 @@ public class Controller extends Thread {
 	}
 
 	private void SLEEP() {
-		System.out.println("SLEEP");
 		this.wDog = 0;
 		this.tmr.setPrescaler(0);
 		this.memory.setBitRegisterSpecial(0x03, 3, 0);
@@ -883,7 +687,6 @@ public class Controller extends Thread {
 	}
 
 	private void SUBLW(int k) {
-		System.out.println("SUBLW");
 		int w = this.memory.getwRegister();
 		int result;
 		if (w > k) {
@@ -906,7 +709,6 @@ public class Controller extends Thread {
 	}
 
 	private void XORLW(int k) {
-		System.out.println("XORLW");
 		int w = this.memory.getwRegister();
 		int result = (w ^ k);
 		this.memory.setwRegister(result);
