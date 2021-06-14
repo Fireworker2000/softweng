@@ -1,7 +1,7 @@
 
 public class Processor extends Thread {
 	private Controller ctr;
-	private decoderInterface decoder;
+	private DecoderInterface decoder;
 	protected boolean exit = false;
 	protected boolean isDebugging = false;
 	protected boolean nextStep = false;

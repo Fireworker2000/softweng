@@ -1,5 +1,5 @@
 
-public abstract class abstractDecoder implements decoderInterface {
+public abstract class AbstractDecoder implements DecoderInterface {
 	
     private Logger logger = Logger.commandLogger();
     

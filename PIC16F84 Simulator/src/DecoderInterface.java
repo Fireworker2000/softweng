@@ -1,5 +1,5 @@
 
-public interface decoderInterface {
+public interface DecoderInterface {
 	
 	public Instruction decodeCodeline(int codeline);
 	

@@ -1,5 +1,5 @@
 
-public class Decoder extends abstractDecoder {
+public class Decoder extends AbstractDecoder {
 	
 	public Decoder() {}
 	
@@ -96,6 +96,10 @@ public class Decoder extends abstractDecoder {
 		case 2:  output = "SUBWF"; break;
 		case 14: output = "SWAPF"; break;
 		case 6:  output = "XORWF"; break;
+		default: {
+			super.logError("Illegal Argument at command decoding (precommand 0), decoded command is out of bounds.");
+			throw new IllegalArgumentException();
+			}
 		}
 		return output;
 	}
@@ -108,12 +112,17 @@ public class Decoder extends abstractDecoder {
 		case 1:	output = "BSF"; break;
 		case 2:	output = "BTFSC"; break;
 		case 3:	output = "BTFSS"; break;
+		default: {
+			super.logError("Illegal Argument at command decoding (precommand 0), decoded command is out of bounds.");
+			throw new IllegalArgumentException();
+			}
 		}
 		
 		return output;
 	}
 	
 	private String decodeInstructionWithPrecommandThree(int command) {
+
 		if (command == 8) {
 			return "IORLW";
 		} 
