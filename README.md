@@ -4,7 +4,7 @@ Second attempt at this. Changed topic in between.
 
 The folder "Altes Projekt" contains the old project which wasn't even started due to procrastination. So you'll see no code, only a collection of my ideas written in gibberish German.
 
-For the actual project, please head over to "PIC16F84 Simulator". You'll find anything important over there.
+For the actual project, please head over to "PIC16F84 Simulator". You'll find anything important over there. To run it, just run the SimGui class.
 
 ## Funfact
 
